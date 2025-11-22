@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title data-i18n="health_goals_title">الأهداف الصحية</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet" />
+
+<style>
+  body {
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(140deg, #C8B6FF, #B9FBC0);
+    margin: 0; padding: 0;
+    min-height: 100vh;
+    color: #333;
+    overflow-x: hidden;
+  }
+
+  .container {
+    max-width: 700px;
+    background: rgba(255,255,255,0.9);
+    border-radius: 22px;
+    box-shadow: 0 0 25px rgba(0,0,0,0.15);
+    margin: 80px auto 40px;
+    padding: 30px 25px;
+    text-align: right;
+  }
+
+  h1 {
+    font-weight: 700;
+    font-size: 2.2rem;
+    margin-bottom: 25px;
+    text-align: center;
+  }
+
+  form {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 25px;
+    justify-content: flex-start;
+  }
+
+  input[type="text"] {
+    flex: 1;
+    padding: 10px 15px;
+    border-radius: 14px;
+    border: 1px solid #8A7FFF;
+    font-size: 1rem;
+  }
+
+  button {
+    background-color: #8A7FFF;
+    color: white;
+    border: none;
+    padding: 10px 22px;
+    border-radius: 14px;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+
+  button:hover {
+    background-color: #6A5CF7;
+  }
+
+  ul.goals-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  ul.goals-list li {
+    background: #8A7FFF;
+    color: white;
+    margin-bottom: 15px;
+    padding: 14px 20px;
+    border-radius: 18px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  ul.goals-list li button.remove-btn {
+    background: #f44336;
+    padding: 6px 14px;
+    border-radius: 14px;
+    font-weight: 600;
+    font-size: 0.9rem;
+  }
+
+  ul.goals-list li button.remove-btn:hover {
+    background: #d32f2f;
+  }
+
+  /* زر القائمة */
+  .sidebar-toggle {
+    position: fixed;
+    top: 16px;
+    left: 16px;
+    background-color: #8A7FFF;
+    border: none;
+    color: white;
+    padding: 10px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    z-index: 1001;
+  }
+
+  .sidebar-toggle:hover {
+    background-color: #6A5CF7;
+  }
+
+  /* القائمة الجانبية */
+  .sidebar {
+    height: 100%;
+    width: 0;
+    position: fixed;
+    z-index: 1000;
+    top: 0;
+    left: 0;
+    background-color: #7F67FF;
+    overflow-x: hidden;
+    transition: 0.3s;
+    padding-top: 60px;
+    text-align: right;
+  }
+
+  .sidebar a {
+    padding: 15px 30px;
+    text-decoration: none;
+    font-size: 18px;
+    color: white;
+    display: block;
+    transition: 0.2s;
+  }
+
+  .sidebar a:hover {
+    background-color: #6A5CF7;
+  }
+
+  .sidebar .close-btn {
+    position: absolute;
+    top: 10px;
+    right: 18px;
+    font-size: 28px;
+    color: white;
+    cursor: pointer;
+  }
+
+  /* زر الترجمة */
+  .lang-switcher {
+    position: fixed;
+    top: 16px;
+    right: 16px;
+    z-index: 1002;
+  }
+
+  .lang-switcher button {
+    background-color: #8A7FFF;
+    border: none;
+    color: white;
+    padding: 8px 14px;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-left: 8px;
+  }
+
+  .lang-switcher button:hover {
+    background-color: #6A5CF7;
+  }
+
+  /* Responsive */
+  @media (max-width: 480px) {
+    .container {
+      margin: 60px 12px 30px;
+      padding: 20px 15px;
+    }
+    h1 {
+      font-size: 1.8rem;
+    }
+    form {
+      flex-direction: column;
+      gap: 12px;
+    }
+    button {
+      width: 100%;
+      padding: 12px 0;
+    }
+    ul.goals-list li {
+      font-size: 1rem;
+      padding: 12px 16px;
+    }
+    ul.goals-list li button.remove-btn {
+      padding: 5px 10px;
+      font-size: 0.85rem;
+    }
+  }
+</style>
+</head>
+<body>
+
+<!-- زر القائمة -->
+<button class="sidebar-toggle" aria-label="فتح القائمة">&#9776;</button>
+
+<!-- القائمة الجانبية -->
+<div class="sidebar" id="sidebar" aria-label="القائمة الجانبية">
+  <a href="javascript:void(0)" class="close-btn" aria-label="إغلاق القائمة">&times;</a>
+
+  <a href="splash.html" data-i18n="menu_splash">الشاشة الرئيسية</a>
+  <a href="login.html" data-i18n="menu_login">تسجيل الدخول</a>
+  <a href="register.html" data-i18n="menu_register">التسجيل</a>
+  <a href="about.html" data-i18n="menu_about">حول التطبيق</a>
+  <a href="home.html" data-i18n="menu_home">الرئيسية</a>
+  <a href="profile.html" data-i18n="menu_profile">الملف الشخصي</a>
+  <a href="categories.html" data-i18n="menu_categories">التصنيفات</a>
+  <a href="all-recipes.html" data-i18n="menu_all_recipes">جميع الوصفات</a>
+  <a href="calorie-tracker.html" data-i18n="menu_calories">تتبع السعرات الحرارية</a>
+  <a href="add-ingredient.html" data-i18n="menu_add_ingredient">إضافة مكون</a>
+  <a href="category-recipes.html" data-i18n="menu_category_recipes">وصفات التصنيف</a>
+  <a href="recipe-details.html" data-i18n="menu_recipe_details">تفاصيل الوصفة</a>
+  <a href="search.html" data-i18n="menu_search">بحث</a>
+  <a href="shopping-list.html" data-i18n="menu_shopping_list">قائمة التسوق</a>
+  <a href="health-goals.html" data-i18n="menu_health_goals">الأهداف الصحية</a>
+  <a href="settings.html" data-i18n="menu_settings">الإعدادات</a>
+</div>
+
+<!-- زر الترجمة -->
+<div class="lang-switcher" id="lang-switcher" role="navigation" aria-label="تبديل اللغة">
+  <button id="lang-ar" aria-pressed="true">العربية</button>
+  <button id="lang-en" aria-pressed="false">English</button>
+</div>
+
+<div class="container">
+  <h1 data-i18n="health_goals_title">الأهداف الصحية</h1>
+
+  <form id="goal-form" aria-label="نموذج إضافة هدف صحي">
+    <input type="text" id="goal-input" placeholder="أدخل هدف صحي جديد" data-i18n-placeholder="goal_input_placeholder" aria-label="حقل إدخال الهدف الصحي" />
+    <button type="submit" id="add-goal-btn" data-i18n="add_goal_btn">أضف الهدف</button>
+  </form>
+
+  <ul class="goals-list" id="goals-list" aria-live="polite" aria-relevant="additions removals">
+    <!-- الأهداف ستضاف هنا -->
+  </ul>
+</div>
+
+<script>
+  // القائمة الجانبية
+  const sidebar = document.getElementById('sidebar');
+  const openBtn = document.querySelector('.sidebar-toggle');
+  const closeBtn = sidebar.querySelector('.close-btn');
+
+  openBtn.addEventListener('click', () => {
+    sidebar.style.width = '250px';
+  });
+
+  closeBtn.addEventListener('click', () => {
+    sidebar.style.width = '0';
+  });
+
+  window.addEventListener('click', (e) => {
+    if (!sidebar.contains(e.target) && e.target !== openBtn) {
+      sidebar.style.width = '0';
+    }
+  });
+
+  // الترجمة
+  const translations = {
+    ar: {
+      health_goals_title: "الأهداف الصحية",
+      goal_input_placeholder: "أدخل هدف صحي جديد",
+      add_goal_btn: "أضف الهدف",
+      menu_splash: "الشاشة الرئيسية",
+      menu_login: "تسجيل الدخول",
+      menu_register: "التسجيل",
+      menu_about: "حول التطبيق",
+      menu_home: "الرئيسية",
+      menu_profile: "الملف الشخصي",
+      menu_categories: "التصنيفات",
+      menu_all_recipes: "جميع الوصفات",
+      menu_calories: "تتبع السعرات الحرارية",
+      menu_add_ingredient: "إضافة مكون",
+      menu_category_recipes: "وصفات التصنيف",
+      menu_recipe_details: "تفاصيل الوصفة",
+      menu_search: "بحث",
+      menu_shopping_list: "قائمة التسوق",
+      menu_health_goals: "الأهداف الصحية",
+      menu_settings: "الإعدادات",
+      remove_btn: "حذف"
+    },
+    en: {
+      health_goals_title: "Health Goals",
+      goal_input_placeholder: "Enter new health goal",
+      add_goal_btn: "Add Goal",
+      menu_splash: "Splash Screen",
+      menu_login: "Login",
+      menu_register: "Register",
+      menu_about: "About",
+      menu_home: "Home",
+      menu_profile: "Profile",
+      menu_categories: "Categories",
+      menu_all_recipes: "All Recipes",
+      menu_calories: "Calorie Tracker",
+      menu_add_ingredient: "Add Ingredient",
+      menu_category_recipes: "Category Recipes",
+      menu_recipe_details: "Recipe Details",
+      menu_search: "Search",
+      menu_shopping_list: "Shopping List",
+      menu_health_goals: "Health Goals",
+      menu_settings: "Settings",
+      remove_btn: "Remove"
+    }
+  };
+
+  let currentLang = localStorage.getItem('appLang') || 'ar';
+
+  function setLanguage(lang) {
+    if (!translations[lang]) return;
+    currentLang = lang;
+    localStorage.setItem('appLang', lang);
+
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+      const key = el.getAttribute('data-i18n');
+      if (translations[lang][key]) {
+        el.textContent = translations[lang][key];
+      }
+    });
+
+    document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+      const key = el.getAttribute('data-i18n-placeholder');
+      if (translations[lang][key]) {
+        el.placeholder = translations[lang][key];
+      }
+    });
+
+    if (lang === 'ar') {
+      document.documentElement.lang = 'ar';
+      document.documentElement.dir = 'rtl';
+      document.getElementById('lang-ar').setAttribute('aria-pressed', 'true');
+      document.getElementById('lang-en').setAttribute('aria-pressed', 'false');
+    } else {
+      document.documentElement.lang = 'en';
+      document.documentElement.dir = 'ltr';
+      document.getElementById('lang-ar').setAttribute('aria-pressed', 'false');
+      document.getElementById('lang-en').setAttribute('aria-pressed', 'true');
+    }
+  }
+
+  document.getElementById('lang-ar').addEventListener('click', () => setLanguage('ar'));
+  document.getElementById('lang-en').addEventListener('click', () => setLanguage('en'));
+
+  document.addEventListener('DOMContentLoaded', () => {
+    setLanguage(currentLang);
+    loadGoals();
+  });
+
+  // إدارة الأهداف الصحية
+  const goalForm = document.getElementById('goal-form');
+  const goalInput = document.getElementById('goal-input');
+  const goalsList = document.getElementById('goals-list');
+
+  // تحميل الأهداف من localStorage
+  function loadGoals() {
+    const storedGoals = JSON.parse(localStorage.getItem('healthGoals') || '[]');
+    goalsList.innerHTML = '';
+    storedGoals.forEach((goal, idx) => {
+      addGoalToDOM(goal, idx);
+    });
+  }
+
+  // إضافة هدف جديد لـ DOM والقائمة
+  function addGoalToDOM(goalText, index) {
+    const li = document.createElement('li');
+    li.textContent = goalText;
+
+    // زر الحذف
+    const removeBtn = document.createElement('button');
+    removeBtn.className = 'remove-btn';
+    removeBtn.type = 'button';
+    removeBtn.setAttribute('aria-label', translations[currentLang].remove_btn + ': ' + goalText);
+    removeBtn.textContent = translations[currentLang].remove_btn;
+    removeBtn.addEventListener('click', () => {
+      removeGoal(index);
+    });
+
+    li.appendChild(removeBtn);
+    goalsList.appendChild(li);
+  }
+
+  // إزالة هدف من القائمة والتخزين
+  function removeGoal(index) {
+    const storedGoals = JSON.parse(localStorage.getItem('healthGoals') || '[]');
+    storedGoals.splice(index, 1);
+    localStorage.setItem('healthGoals', JSON.stringify(storedGoals));
+    loadGoals();
+  }
+
+  // إضافة هدف جديد من الفورم
+  goalForm.addEventListener('submit', e => {
+    e.preventDefault();
+    const newGoal = goalInput.value.trim();
+    if (newGoal) {
+      const storedGoals = JSON.parse(localStorage.getItem('healthGoals') || '[]');
+      storedGoals.push(newGoal);
+      localStorage.setItem('healthGoals', JSON.stringify(storedGoals));
+      goalInput.value = '';
+      loadGoals();
+    }
+  });
+
+  // تحديث نص زر الحذف عند تغيير اللغة
+  function updateRemoveButtonsText() {
+    const buttons = document.querySelectorAll('.remove-btn');
+    buttons.forEach(btn => {
+      btn.textContent = translations[currentLang].remove_btn;
+      btn.setAttribute('aria-label', translations[currentLang].remove_btn + ': ' + btn.parentElement.firstChild.textContent);
+    });
+  }
+
+  // تحديث زر الحذف عند تغيير اللغة
+  function updateAllTexts() {
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+      const key = el.getAttribute('data-i18n');
+      if (translations[currentLang][key]) {
+        el.textContent = translations[currentLang][key];
+      }
+    });
+    document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+      const key = el.getAttribute('data-i18n-placeholder');
+      if (translations[currentLang][key]) {
+        el.placeholder = translations[currentLang][key];
+      }
+    });
+    updateRemoveButtonsText();
+  }
+
+  // استمع لتغيير اللغة وعرض التحديثات
+  document.getElementById('lang-ar').addEventListener('click', () => {
+    setLanguage('ar');
+    updateAllTexts();
+  });
+
+  document.getElementById('lang-en').addEventListener('click', () => {
+    setLanguage('en');
+    updateAllTexts();
+  });
+</script>
+
+</body>
+</html>
